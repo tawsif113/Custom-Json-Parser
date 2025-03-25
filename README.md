@@ -26,18 +26,6 @@ null values
 
 🚨 Basic error handling
 
-Installation
-
-1. Requirements
-
-Java 17 or higher
-
-(Optional) Maven/Gradle if adding to build system
-
-2. Clone repository
-
-git clone https://github.com/your-username/custom-json-parser.git
-
 Usage
 
 Basic Parsing
@@ -95,27 +83,5 @@ Additional JSON features
 
 Performance optimizations
 
-Follow standard GitHub workflow:
 
-Fork repository
-
-Create feature branch
-
-Submit PR with description
-
-License
-
-MIT License
-
-Project Structure
-
-src/
-├── main/
-│   ├── java/
-│   │   ├── parser/       # Core parser implementation
-│   │   ├── tokenizer/    # Tokenization logic
-│   │   └── converter/    # Spring Boot integration
-└── test/                 # Unit tests (recommended)
-
-Note: Replace your-username in the clone URL with your actual GitHub username. Add screenshots/example outputs in an assets/ folder if needed.
 
