@@ -1,0 +1,92 @@
+package com.mydesire.explore.customJsonParser;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class JsonTokenizer {
+
+    private final String json;
+
+    public JsonTokenizer(String json){
+        this.json = json;
+    }
+
+    private int position;
+
+    public List<JsonToken> tokenize(){
+        List<JsonToken> tokens = new ArrayList<>();
+        while (position < json.length()) {
+            char c = json.charAt(position);
+            switch (c) {
+                case '{' -> tokens.add(new JsonToken(TokenType.OPEN_BRACE, "{"));
+                case '}' -> tokens.add(new JsonToken(TokenType.CLOSE_BRACE, "}"));
+                case '[' -> tokens.add(new JsonToken(TokenType.OPEN_BRACKET, "["));
+                case ']' -> tokens.add(new JsonToken(TokenType.CLOSE_BRACKET, "]"));
+                case ':' -> tokens.add(new JsonToken(TokenType.COLON, ":"));
+                case ',' -> tokens.add(new JsonToken(TokenType.COMMA, ","));
+                case '"' -> tokens.add(readString());
+                case ' ', '\n', '\r', '\t' -> {} // Skip whitespace
+                default -> {
+                    if (Character.isDigit(c) || c == '-') {
+                        tokens.add(readNumber());
+                    } else if (c == 't' || c == 'f' || c == 'n') {
+                        tokens.add(readLiteral());
+                    }
+                }
+            }
+            position++;
+        }
+        return tokens;
+    }
+
+    private JsonToken readString() {
+        StringBuilder sb = new StringBuilder();
+        position++; // Skip opening quote
+        while (position < json.length()) {
+            char c = json.charAt(position);
+            if (c == '"') break;
+            sb.append(c);
+            position++;
+        }
+        return new JsonToken(TokenType.STRING, sb.toString());
+    }
+
+    private JsonToken readNumber() {
+
+        StringBuilder sb = new StringBuilder();
+        while (position < json.length()) {
+            char c = json.charAt(position);
+            if (Character.isDigit(c) || c == '-' || c == '.' || c == 'e' || c == 'E') {
+                sb.append(c);
+                position++;
+            } else {
+                position--; // Rewind for next token
+                break;
+            }
+        }
+        return new JsonToken(TokenType.NUMBER, sb.toString());
+    }
+
+    private JsonToken readLiteral() {
+
+        StringBuilder sb = new StringBuilder();
+        while (position < json.length()) {
+            char c = json.charAt(position);
+            if (Character.isLetter(c)) {
+                sb.append(c);
+                position++;
+            } else {
+                position--; // Rewind
+                break;
+            }
+        }
+        String literal = sb.toString();
+        return switch (literal) {
+            case "true" -> new JsonToken(TokenType.TRUE, "true");
+            case "false" -> new JsonToken(TokenType.FALSE, "false");
+            case "null" -> new JsonToken(TokenType.NULL, "null");
+            default -> throw new RuntimeException("Invalid literal: " + literal);
+        };
+    }
+
+}
